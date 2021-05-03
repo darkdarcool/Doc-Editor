@@ -1,25 +1,124 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>Hello World!</title>
-    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'"
-    />
-    <meta
-      http-equiv="X-Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'"
-    />
-  </head>
-  <body>
-    <h1 id = "head">
-			DSDOC
-		</h1>
-		<script src = "./dist/home.js"></script>
+    <head>
+        <title>Markdown Editor</title>
+        <meta charset="UTF-8">
+        
+        <script src="node_modules/detect-process/dist/detectProcess.js"></script>
+        <script>
+        
+        const PROCESS_CONTEXT = detectProcess.getName();
+        
+            // Only electron menu - if env is electron
+            if (PROCESS_CONTEXT === 'electron') {
+                document.write('<script src="scripts/menu.js"><\/script>');
+                window.$ = window.jQuery = require('./node_modules/jquery/dist/jquery.js');
+            } else {
+                document.write('<script src="https://code.jquery.com/jquery-2.1.4.min.js"><\/script>');
+            }
+        
+        </script>
 
-    <!-- You can also require other files to run in this process -->
-    <script src="./dist/renderer.js"></script>
-  </body>
+        <!-- We use uikit and the uikit components: notify, htmleditor
+          -- The htmleditor is a modification and is loaded later ... -->
+
+        <link rel="stylesheet" href="node_modules/uikit/dist/css/uikit.css" />
+        <link rel="stylesheet" href="node_modules/uikit/dist/css/components/notify.css" />
+        <link rel="stylesheet" href="scripts/htmleditor.css">
+
+        <script src="node_modules/uikit/dist/js/uikit.js"></script>
+        <script src="node_modules/uikit/dist/js/components/notify.js"></script>
+
+        <link rel="stylesheet" href="node_modules/codemirror/lib/codemirror.css">
+        
+        <script src="node_modules/codemirror/lib/codemirror.js"></script>
+        <script src="node_modules/codemirror/mode/markdown/markdown.js"></script>
+        <script src="node_modules/codemirror/addon/mode/overlay.js"></script>
+        <script src="node_modules/codemirror/mode/xml/xml.js"></script>
+        <script src="node_modules/codemirror/mode/gfm/gfm.js"></script>
+
+        <script src="node_modules/mathjax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({
+            tex2jax: {
+            preview: "none",
+            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+            processEscapes: true
+            },
+            messageStyle: "none"
+
+            });
+        </script>
+
+        <link rel="stylesheet" href="node_modules/highlightjs/styles/default.css">
+
+        <script src ="node_modules/markdown-table-template/dist/mdtable.js"></script> 
+
+        <script src="node_modules/markdown-it-embed-mathjax-highlight/dist/markdown-it-embed-mathjax-highlight.js"></script>
+        <script src ="node_modules/highlightjs/highlight.pack.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script>
+        <script>markdownItEmbedMathjaxHighlight.options.html = true;</script>
+        <script>marked = markdownItEmbedMathjaxHighlight;</script>
+        <script src="scripts/htmleditor.js"></script>
+        <script src="scripts/store.js"></script>
+
+        <!-- Highlight.js Note: Can not make it work through npm -->
+        <script>
+
+            // File browsing
+            if (PROCESS_CONTEXT === 'electron') {
+                document.write('<script type="text/javascript" src="scripts/electron.js"><\/script>');
+            } else {
+                document.write('<script type="text/javascript" src="scripts/web.js"><\/script>');
+            }
+
+        </script>
+    </head>
+    <body>
+        
+        <div id="file-modal" class="uk-modal">
+            <div class="uk-modal-dialog file-modal">
+                <a class="uk-modal-close uk-close"></a>
+            </div>
+        </div>
+        
+        <div id="image-modal" class="uk-modal">
+            <div class="uk-modal-dialog image-modal">
+                <a class="uk-modal-close uk-close"></a>
+            </div>
+        </div>
+
+        <div id="video-modal" class="uk-modal">
+            <div class="uk-modal-dialog video-modal">
+                <a class="uk-modal-close uk-close"></a>
+            </div>
+        </div>
+
+        <div id="table-modal" class="uk-modal">
+            <div class="uk-modal-dialog">
+                <a class="uk-modal-close uk-close"></a>
+                <form class="uk-form table-form">
+
+                    <fieldset data-uk-margin>
+                        <legend>Table</legend>
+                        <input type="text" class ="table-rows" placeholder="Rows">
+                        <input type="text" class= "table-cols" placeholder="Columns">
+                        <button class="uk-button">Send</button>
+                    </fieldset>
+
+                </form>
+
+            </div>
+        </div>
+
+        <span class="markdown">
+            <textarea data-uk-htmleditor="{
+                mode:'split', 
+                maxsplitsize:800, 
+                markdown:true, 
+                lblPreview: 'Preview', 
+                lblCodeview: 'Markdown'
+                }"></textarea>
+        </span>
+    </body>
 </html>
